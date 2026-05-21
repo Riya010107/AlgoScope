@@ -42,7 +42,8 @@ const CodeEditor = ({
 
     const extension = extensions[language] || 'txt'
 
-    const blob = new Blob([value], {
+    const safeValue = value ?? ''
+    const blob = new Blob([safeValue], {
       type: 'text/plain',
     })
 
