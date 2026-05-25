@@ -1,4 +1,4 @@
-import React from 'react'
+import { useMemo } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { ChevronRight, Home } from 'lucide-react'
 
@@ -21,7 +21,14 @@ const routeLabels = {
 export default function Breadcrumbs() {
   const location = useLocation()
 
-  const pathnames = location.pathname.split('/').filter(Boolean)
+  const pathnames = useMemo(
+    () =>
+      location.pathname
+        .replace(/[?#].*$/, '')
+        .split('/')
+        .filter(Boolean),
+    [location.pathname]
+  )
 
   if (pathnames.length === 0) {
     return null
