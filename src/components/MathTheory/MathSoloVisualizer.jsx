@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import SpeedSlider from '../SpeedSlider'
 import ComplexityCard from '../ComplexityCard'
 import CodePanel from '../visualizer/CodePanel'
@@ -37,11 +38,24 @@ const ALGO_TABS = [
   { key: 'fibonacci', label: 'Fibonacci Sequence', complexityKey: 'fibonacci' },
 ]
 
+const DEFAULT_ALGO_KEY = 'gcd'
+const VALID_ALGO_KEYS = new Set(ALGO_TABS.map((tab) => tab.key))
+
 export const MathSoloVisualizer = () => {
+  const [searchParams, setSearchParams] = useSearchParams()
+
   useEffect(() => {
     document.title = 'Math Theory | AlgoScope'
   }, [])
-  const [algo, setAlgo] = useState('gcd')
+
+  const algoFromUrl = searchParams.get('algo')
+  const nextAlgo =
+    algoFromUrl && VALID_ALGO_KEYS.has(algoFromUrl)
+      ? algoFromUrl
+      : DEFAULT_ALGO_KEY
+
+  const [algo, setAlgo] = useState(nextAlgo)
+  const [prevAlgo, setPrevAlgo] = useState(nextAlgo)
   const [speed, setSpeed] = useState(1)
   const [language, setLanguage] = useState('javascript')
 
@@ -79,6 +93,21 @@ export const MathSoloVisualizer = () => {
     stepForward,
     stepBackward,
   } = useStepPlayback({ speed })
+
+  if (nextAlgo !== prevAlgo) {
+    setAlgo(nextAlgo)
+    setPrevAlgo(nextAlgo)
+    clear()
+  }
+
+  const handleAlgoChange = (nextAlgo) => {
+    setAlgo(nextAlgo)
+    clear()
+
+    const nextParams = new URLSearchParams(searchParams)
+    nextParams.set('algo', nextAlgo)
+    setSearchParams(nextParams)
+  }
 
   const handleVisualize = () => {
     clear()
@@ -150,10 +179,7 @@ export const MathSoloVisualizer = () => {
           {ALGO_TABS.map((t) => (
             <button
               key={t.key}
-              onClick={() => {
-                setAlgo(t.key)
-                clear()
-              }}
+              onClick={() => handleAlgoChange(t.key)}
               className={`w-full text-left px-3 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200
                 ${
                   algo === t.key
