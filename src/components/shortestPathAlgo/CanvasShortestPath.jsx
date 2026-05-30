@@ -293,7 +293,9 @@ export const CanvasShortestPath = ({
       let cur = dst
 
       if (src === dst) {
-        setStatus(`Source and Target are the same node (${src}). Distance is 0.`)
+        setStatus(
+          `Source and Target are the same node (${src}). Distance is 0.`
+        )
         nodes.update({
           id: src,
           color: { background: '#10b981', border: '#ffffff' },
