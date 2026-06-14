@@ -346,7 +346,7 @@ const ALGORITHMS = [
   },
 ]
 
-const SearchBar = () => {
+const SearchBar = ({ onOpen }) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [query, setQuery] = useState('')
   const [results, setResults] = useState([])
@@ -412,9 +412,10 @@ const SearchBar = () => {
   }
 
   const openModal = React.useCallback(() => {
-    previousFocusRef.current = document.activeElement
-    setIsModalOpen(true)
-  }, [])
+  previousFocusRef.current = document.activeElement
+  setIsModalOpen(true)
+  onOpen?.()
+}, [onOpen])
 
   const handleCloseModal = React.useCallback(() => {
     setIsModalOpen(false)
